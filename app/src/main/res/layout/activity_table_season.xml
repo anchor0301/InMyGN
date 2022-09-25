@@ -4,23 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    tools:context=".MainActivity">
-
+    tools:context=".tableSeason"
+    android:orientation="vertical">
     <Button
-        android:id="@+id/btnTable"
+        android:id="@+id/btnData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="리스트뷰 보이기"
-        android:textAllCaps="false"/>
-    <Button
-        android:id="@+id/btnMap"
+        android:text="데이터 불러오기"
+        android:textAllCaps="false"></Button>
+
+    <ListView
+        android:id="@+id/listView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="지도로 보이기"
-        android:textAllCaps="false"/>
-
-
-
+        android:layout_height="match_parent"></ListView>
 </LinearLayout>

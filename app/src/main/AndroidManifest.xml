@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.inmygn">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,10 +13,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-
-        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.InMyGN"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+<!--        구글 api          -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCdviHgwaulX8Wofmv8WyuGYS1K7YOrGJo"/>
+
+
+        <activity
+            android:name=".tableSeason"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -24,6 +35,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".mapSeason"
+            android:exported="true" />
     </application>
 
 </manifest>
