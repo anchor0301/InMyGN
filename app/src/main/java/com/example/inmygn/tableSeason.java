@@ -34,7 +34,6 @@ public class tableSeason extends AppCompatActivity {
     ArrayList<String> items = new ArrayList<String>();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +47,9 @@ public class tableSeason extends AppCompatActivity {
         listView.setAdapter(adapter);
         btnData = (Button)findViewById(R.id.btnData);
 
+        btnData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 new Thread(){
                     @Override
                     public void run() {
@@ -95,7 +97,6 @@ public class tableSeason extends AppCompatActivity {
 
                                 //타이틀 제목
                                 String data_title = temp.getString("data_title");
-                                String user_address = temp.getString("user_address");
                                 items.add(data_title);
                             }
 
@@ -115,7 +116,8 @@ public class tableSeason extends AppCompatActivity {
                         }
                     }
                 }.start();
-
+            }
+        });
 
         // 리스트뷰의 아이템 클릭 이벤트 > 토스트 메시지 띄우기
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

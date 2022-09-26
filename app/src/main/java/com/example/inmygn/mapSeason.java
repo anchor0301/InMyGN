@@ -10,9 +10,13 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,21 +25,40 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
-
+    private String key = "WugO7Pgnqoa7fJuWbJ4nMaaIh%2Bvw2l%2F%2FaGF7MGgIyBl4vRTVhumNtnrqkL%2BJDxh94rXo%2BR8DgPREJu8h6AVefQ%3D%3D";
+    private String address = "http://apis.data.go.kr/6480000/gyeongnamtourseason/gyeongnamtourseasonlist";
+    private ListView listView;
+    private Button btnData;
     private GoogleMap mMap;
+    ArrayAdapter adapter;
+
+    String urlAddress = address + "?serviceKey=" + key + "&pageNo=1&numOfRows=55&resultType=json" ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_season);
-
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mapSeason.this);
+
+
+        StrictMode.setThreadPolicy(policy);
     }
 
     @Override
@@ -44,36 +67,82 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
         Context context = this;
         // final LatLng Pocheon = new LatLng(37.894936, 127.200344);   // 마커 추가
 
-        Location cityHallLocation = addrToPoint(context);
-        final LatLng Pocheon = new LatLng(cityHallLocation.getLatitude(), cityHallLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(Pocheon);
-        markerOptions.title("포천시청");                                    // 마커 옵션 추가
-        googleMap.addMarker(markerOptions);                                 // 마커 등록
+                try {
+                    URL url = new URL(urlAddress);
+                    InputStream is =  url.openStream();
+                    InputStreamReader isr = new InputStreamReader(is);
+                    BufferedReader reader = new BufferedReader(isr);
 
-        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Pocheon, 12));
-                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);     // 지도 유형 설정
-            }
-        }); // 구글맵 로딩이 완료되면 카메라 위치 조정
+                    StringBuffer buffer = new StringBuffer();
+                    String line = reader.readLine();
+                    while (line != null) {
+                        buffer.append(line + "\n");
+                        line = reader.readLine();
+                    }
+
+                    String jsonData = buffer.toString();
+
+                    // jsonData를 먼저 JSONObject 형태로 바꾼다.
+                    JSONObject obj = new JSONObject(jsonData);
+
+                    // obj의 "gyeongnamtourseasonlist"의 JSONObject를 추출
+                    JSONObject gyeongnamtourseasonlist = (JSONObject)obj.get("gyeongnamtourseasonlist");
+
+
+                    // gyeongnamtourseasonlist "body"의 JSONObject를 추출
+                    JSONObject SeasonBody = (JSONObject)gyeongnamtourseasonlist.get("body");
+
+                    // SeasonBody "item"의 JSONObject를 추출
+                    JSONObject SeasonItems = (JSONObject)SeasonBody.get("items");
+
+
+
+                    // boxOfficeResult의 JSONObject에서 "dailyBoxOfficeList"의 JSONArray 추출
+                    JSONArray dailyBoxOfficeList = (JSONArray)SeasonItems.get("item");
+
+                    for (int i = 0; i < dailyBoxOfficeList.length(); i++) {
+
+                        JSONObject temp = dailyBoxOfficeList.getJSONObject(i);
+
+                        //타이틀 제목
+                        String data_title = temp.getString("user_address");
+
+
+                        Location cityHallLocation = addrToPoint(context,data_title);
+                        final LatLng Pocheon = new LatLng(cityHallLocation.getLatitude(), cityHallLocation.getLongitude());
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.position(Pocheon);
+                        markerOptions.title(data_title);                                    // 마커 옵션 추가
+                        googleMap.addMarker(markerOptions);                                 // 마커 등록
+                    }
+
+
+
+
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
     }
 
-    public static Location addrToPoint(Context context) {
+    public static Location addrToPoint(Context context,String locationName) {
         Location location = new Location("");
         Geocoder geocoder = new Geocoder(context);
         List<Address> addresses = null;
 
         try {
-            addresses = geocoder.getFromLocationName("창원시/창녕군/합천군", 3);
+            addresses = geocoder.getFromLocationName(locationName, 3);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (addresses != null) {
             for (int i = 0; i < addresses.size(); i++) {
                 Address lating = addresses.get(i);
-                System.out.print("성민"+lating);
                 location.setLatitude(lating.getLatitude());
                 location.setLongitude(lating.getLongitude());
             }
@@ -125,6 +194,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
 //        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL );     // 지도 유형 설정
 //
 //    }
+
 
 }
 
