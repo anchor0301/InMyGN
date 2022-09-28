@@ -14,10 +14,7 @@
         android:layout_height="wrap_content"
         android:text="리스트뷰 보이기"
         android:textAllCaps="false"/>
-    <ProgressBar
-        android:layout_height="73dp"
-        android:layout_width="match_parent" style="?android:attr/progressBarStyleHorizontal"
-        android:id="@+id/progressBar"/>
+
     <Button
         android:id="@+id/btnMap"
         android:layout_width="match_parent"
