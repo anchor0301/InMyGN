@@ -18,6 +18,7 @@ import android.webkit.WebSettings;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -40,7 +42,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
+public class mapSeason extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private String key = "WugO7Pgnqoa7fJuWbJ4nMaaIh%2Bvw2l%2F%2FaGF7MGgIyBl4vRTVhumNtnrqkL%2BJDxh94rXo%2BR8DgPREJu8h6AVefQ%3D%3D";
     private String address = "http://apis.data.go.kr/6480000/gyeongnamtourseason/gyeongnamtourseasonlist";
     private ListView listView;
@@ -108,6 +110,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
                 //타이틀 제목
                 String data_title = temp.getString("user_address");
                 String data_content = temp.getString("data_content");
+                String category_name2 = temp.getString("category_name2");
 
                 //문자열 자르기
 
@@ -115,6 +118,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
                 String date[] = data_title.split("/");
 
                 for (int j = 0; j < date.length; j++) {
+                    System.out.println(date[j]);
                     Location cityHallLocation = addrToPoint(context, date[j]);
                     LatLng Pocheon = new LatLng(cityHallLocation.getLatitude(), cityHallLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
@@ -122,6 +126,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
                             .title(date[j])                                    // 마커 옵션 추가
                             .snippet(data_content);                    //부가 설명
                     googleMap.addMarker(markerOptions);                                 // 마커 등록
+                    mMap.setOnMarkerClickListener(this);
                 }
 
 
@@ -157,6 +162,12 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
             }
         }
         return location;
+    }
+
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        Toast.makeText(this,marker.getSnippet(),Toast.LENGTH_LONG).show();
+        return true;
     }
 
 //
