@@ -10,6 +10,7 @@ public class SeasonTour {
     //여행 내용
     String data_content;
 
+
     @Override
     public String toString() {
         return "SeasonTour{" +

@@ -16,12 +16,13 @@
         android:theme="@style/Theme.InMyGN"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
-<!--        구글 api          -->
+        <activity
+            android:name=".newTableSeason"
+            android:exported="false" />
+        <!-- 구글 api -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCdviHgwaulX8Wofmv8WyuGYS1K7YOrGJo"/>
-
+            android:value="AIzaSyCdviHgwaulX8Wofmv8WyuGYS1K7YOrGJo" />
 
         <activity
             android:name=".tableSeason"
