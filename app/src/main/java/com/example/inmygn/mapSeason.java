@@ -37,7 +37,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
     String address = "http://apis.data.go.kr/6480000/gyeongnamtourseason/gyeongnamtourseasonlist";
     String urlAddress = address + "?serviceKey=" + key + "&pageNo=1&numOfRows=55&resultType=json";
 
-    ArrayList<SeasonTour> SeasonDTO = new ArrayList<>();
+    ArrayList<SeasonTourData> SeasonDTO = new ArrayList<>();
 
 
     @Override
@@ -107,7 +107,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
                     String data_content = temp.getString("data_content");//내용
 
                     //SeasonTour객체에 맞춰 ArrayList에 넣기
-                    SeasonDTO.add(new SeasonTour(data_title, Season, data[j], data_content));
+                    SeasonDTO.add(new SeasonTourData(data_title, Season, data[j], data_content));
 
                 }
 
@@ -120,10 +120,10 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
             e.printStackTrace();
         }
         //Iterator 통한 전체 조회
-        Iterator<SeasonTour> iterator = SeasonDTO.iterator();
+        Iterator<SeasonTourData> iterator = SeasonDTO.iterator();
 
         while (iterator.hasNext()) {
-            SeasonTour e = iterator.next();//hasNext를 해서 다음요소가 있는지 확인해야지만, e.next해서 그 요소를 불러올 수가 있다.
+            SeasonTourData e = iterator.next();//hasNext를 해서 다음요소가 있는지 확인해야지만, e.next해서 그 요소를 불러올 수가 있다.
 
             //지역을 콘솔창에 출력
             System.out.println(e);
@@ -133,7 +133,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
             LatLng location = new LatLng(cityHallLocation.getLatitude(), cityHallLocation.getLongitude());
             //맵 마커 생성
             MarkerOptions markerOptions = new MarkerOptions();
-
+            System.out.println(location);
             markerOptions.position(location)        //좌표 입력
                     .title(e.getData_title())       //마커 타이틀명
                     .snippet(e.getData_content());    //부가 설명
