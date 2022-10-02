@@ -1,6 +1,7 @@
 package com.example.inmygn;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.Serializable;
 
 import android.content.Context;
@@ -11,6 +12,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +29,7 @@ import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadingActivity extends AppCompatActivity  {
+public class LoadingActivity extends AppCompatActivity {
     final String TAG = "LoadingActivity";
 
     @Override
@@ -39,9 +42,138 @@ public class LoadingActivity extends AppCompatActivity  {
 
 
         ArrayList<Location> Tour_Address = new ArrayList<>();
-        for(int i = 0 ; i < Tours.size(); i++) {
-            Log.d("", "convert  "+Tours.size());
-            Tour_Address.add(addrToPoint(this, Tours.get(i).getUser_address()));
+        for (int i = 0; i < Tours.size(); i++) {
+            Location location;
+            String address = Tours.get(i).getUser_address();
+            switch (address) {
+                case "창원시":
+                    location = new Location("");
+                    location.setLatitude(35.2280106);
+                    location.setLongitude(128.6818625);
+
+                    Tour_Address.add(location);
+                    break;
+                case "진주시":
+                    location = new Location("");
+                    location.setLatitude(35.1799817);
+                    location.setLongitude(128.1076213);
+
+                    Tour_Address.add(location);
+                    break;
+                case "통영시":
+                    location = new Location("");
+                    location.setLatitude(34.8544227);
+                    location.setLongitude(128.433182);
+
+                    Tour_Address.add(location);
+                    break;
+                case "사천시":
+                    location = new Location("");
+                    location.setLatitude(35.0037788);
+                    location.setLongitude(128.06418499999998);
+
+                    Tour_Address.add(location);
+                    break;
+                case "김해시":
+                    location = new Location("");
+                    location.setLatitude(35.2285451);
+                    location.setLongitude(128.8893517);
+
+                    Tour_Address.add(location);
+                    break;
+                case "밀양시":
+                    location = new Location("");
+                    location.setLatitude(35.5037598);
+                    location.setLongitude(128.7464415);
+
+                    Tour_Address.add(location);
+                    break;
+                case "거제시":
+                    location = new Location("");
+                    location.setLatitude(34.880642699999996);
+                    location.setLongitude(128.6210824);
+
+                    Tour_Address.add(location);
+                    break;
+                case "양산시":
+                    location = new Location("");
+                    location.setLatitude(35.3350072);
+                    location.setLongitude(129.03716889999998);
+
+                    Tour_Address.add(location);
+                    break;
+                case "의령군":
+                    location = new Location("");
+                    location.setLatitude(35.3221896);
+                    location.setLongitude(128.26165799999998);
+
+                    Tour_Address.add(location);
+                    break;
+                case "함안군":
+                    location = new Location("");
+                    location.setLatitude(35.272559099999995);
+                    location.setLongitude(128.4064797);
+
+                    Tour_Address.add(location);
+                    break;
+                case "창녕군":
+                    location = new Location("");
+                    location.setLatitude(35.544556299999996);
+                    location.setLongitude(128.4922143);
+
+                    Tour_Address.add(location);
+                    break;
+                case "고성군":
+                    location = new Location("");
+                    location.setLatitude(34.973);
+                    location.setLongitude(128.3222);
+
+                    Tour_Address.add(location);
+                    break;
+                case "남해군":
+                    location = new Location("");
+                    location.setLatitude(34.8376721);
+                    location.setLongitude(127.89242339999998);
+
+                    Tour_Address.add(location);
+                    break;
+                case "함양군":
+                    location = new Location("");
+                    location.setLatitude(35.520461399999995);
+                    location.setLongitude(127.7251763);
+
+                    Tour_Address.add(location);
+                    break;
+                case "하동군":
+                    location = new Location("");
+                    location.setLatitude(35.0672108);
+                    location.setLongitude(127.7512687);
+
+                    Tour_Address.add(location);
+                    break;
+                case "산청군":
+                    location = new Location("");
+                    location.setLatitude(35.4155885);
+                    location.setLongitude(127.87349809999999);
+
+                    Tour_Address.add(location);
+                    break;
+                case "거창군":
+                    location = new Location("");
+                    location.setLatitude(35.6867229);
+                    location.setLongitude(127.90951549999998);
+
+                    Tour_Address.add(location);
+                    break;
+                case "합천군":
+                    location = new Location("");
+                    location.setLatitude(35.566575799999995);
+                    location.setLongitude(128.1657995);
+
+                    Tour_Address.add(location);
+                    break;
+            }
+            //Tour_Address.add(location);
         } // 병원 주소만 위도경보로 변환하여 모아놓음
 
         Intent intent = new Intent(LoadingActivity.this, mapSeason.class);
@@ -63,6 +195,8 @@ public class LoadingActivity extends AppCompatActivity  {
         if (addresses != null) {
             for (int i = 0; i < addresses.size(); i++) {
                 Address lating = addresses.get(i);
+
+
                 location.setLatitude(lating.getLatitude());
                 location.setLongitude(lating.getLongitude());
             }
@@ -73,13 +207,16 @@ public class LoadingActivity extends AppCompatActivity  {
 
     public ArrayList<TourData> getJson() {
 
+
         ArrayList<TourData> TourList = new ArrayList<>();
-        String[] address = {"통영시","고성군","진주시","남해군","하동군","창원시","합천군","창녕군","거제시","함안군"};
+        String[] address = {"창원시", "진주시", "통영시", "사천시", "김해시", "밀양시", "밀양시", "거제시", "양산시", "의령군", "함안군", "창녕군", "고성군", "남해군", "하동군", "산청군", "함양군", "거창군", "합천군"};
+
         // TODO 삭제
-        for (int i=0; i <41 ; i++) {
-            int j=(int)((Math.random()*10000)%10);
+        for (int i = 0; i < 800; i++) {
+            int j = (int)(Math.random()*100)%address.length;
             TourList.add(new TourData("성민2", "여름", address[j], "성공"));
-            if(i>=40){
+            Log.d(TAG, "getJson: "+address[j]);
+            if (i >= 70) {
                 Log.d(TAG, "getJson: 끝!");
                 return TourList;
             }
@@ -101,7 +238,6 @@ public class LoadingActivity extends AppCompatActivity  {
 
             //TODO 주석 제거
             TourList = new ArrayList<>();
-
 
 
             String jsonData = findJsonThread.getResult();

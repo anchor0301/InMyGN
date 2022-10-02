@@ -102,10 +102,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
                 double top = vr.latLngBounds.northeast.latitude;
                 double right = vr.latLngBounds.northeast.longitude;
                 double bottom = vr.latLngBounds.southwest.latitude;
-                Log.d("테스트용!", "left = " + String.valueOf(left) +
-                        "top = " + String.valueOf(top) +
-                        "right = " + String.valueOf(right) +
-                        "bottom = " + String.valueOf(bottom) + "\n");
+
                 if (clusterManager != null) clusterManager.clearItems();
                 findMarker(left, top, right, bottom);
             } // 카메라 시점 이동
@@ -117,7 +114,7 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
             public boolean onClusterItemClick(ClusterItem item) {
 
                 Log.d("onMarkerClick", "START: ");
-                Toast.makeText(mapSeason.this, "클릭 마커", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mapSeason.this, "예지니 ❤️", Toast.LENGTH_SHORT).show();
 
                 return false;
             }
