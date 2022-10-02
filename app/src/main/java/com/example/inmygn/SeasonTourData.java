@@ -6,7 +6,9 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-public class SeasonTourData implements ClusterItem {
+import java.io.Serializable;
+
+public class SeasonTourData implements ClusterItem, Serializable {
     //여행 주제
     private String data_title;
     //계절명
@@ -16,9 +18,23 @@ public class SeasonTourData implements ClusterItem {
     //여행 내용
     private String data_content;
 
-    private final LatLng mPosition;
+    private LatLng mPosition;
 
-    public SeasonTourData(double lat,double lng,String data_title, String Season, String user_address, String data_content) {
+
+    public SeasonTourData(String data_title, String Season, String user_address, String data_content) {
+        /**
+         * data_title = 여행 주제
+         * Season = 계절
+         * user_address = 여행지
+         * data_content = 여행 내용
+         **/
+        this.data_title = data_title;
+        this.Season = Season;
+        this.user_address = user_address;
+        this.data_content = data_content;
+    }
+
+    public SeasonTourData(double lat, double lng, String data_title, String Season, String user_address, String data_content) {
         /**
          * lat 위도
          * lng 경도
@@ -95,7 +111,6 @@ public class SeasonTourData implements ClusterItem {
     public void setData_content(String data_content) {
         this.data_content = data_content;
     }
-
 
 
 }

@@ -17,13 +17,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".LoadingActivity"
+            android:exported="true">
+
+        </activity>
+        <activity
             android:name=".newTableSeason"
-            android:exported="true" />
-        <!-- 구글 api -->
+            android:exported="true" /> <!-- 구글 api -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCdviHgwaulX8Wofmv8WyuGYS1K7YOrGJo" />
-
 
         <activity
             android:name=".MainActivity"

@@ -1,13 +1,16 @@
 package com.example.inmygn;
 
+import androidx.appcompat.app.AppCompatActivity;
+import java.io.Serializable;
+
+import android.content.Context;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
+import android.util.Log;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,47 +22,73 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.List;
 
-public class newTableSeason extends AppCompatActivity {
-    String key = "7RANMEU5OfGEBQk2nW5QVCcwIdHD0uw0fOcDva5DC%2B6mSbygxfCmdkIcrrxUdCO998L5UTs6ptBItoAfNsfxWg%3D%3D";
-    String address = "http://apis.data.go.kr/6480000/gyeongnamtourseason/gyeongnamtourseasonlist";
-    String urlAddress = address + "?serviceKey=" + key + "&pageNo=1&numOfRows=55&resultType=json";
-
-    ArrayList<SeasonTourData> SeasonDTO = new ArrayList<SeasonTourData>();
-    ListView listView;
-
+public class LoadingActivity extends AppCompatActivity  {
+    final String TAG = "LoadingActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_table_season);
-
-        //공공데이터 받아오기
-        getJson();
-
-        final MyAdapter myAdapter = new MyAdapter(this, SeasonDTO);
+        setContentView(R.layout.activity_loading);
 
 
-        listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(myAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View v, int position, long id) {
-                Toast.makeText(getApplicationContext(),
-                        SeasonDTO.get(position).getData_title(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+        ArrayList<TourData> Tours = getJson();
 
 
+        ArrayList<Location> Tour_Address = new ArrayList<>();
+        for(int i = 0 ; i < Tours.size(); i++) {
+            Log.d("", "convert  "+Tours.size());
+            Tour_Address.add(addrToPoint(this, Tours.get(i).getUser_address()));
+        } // 병원 주소만 위도경보로 변환하여 모아놓음
+
+        Intent intent = new Intent(LoadingActivity.this, mapSeason.class);
+        intent.putExtra("Tour", Tours);
+        intent.putExtra("Tour_addr", Tour_Address);
+        startActivity(intent);
     }
-    //json 파싱후 어뎁터에 넣음
-    public void getJson() {
+
+    public static Location addrToPoint(Context context, String locationName) {
+        Location location = new Location("");
+        Geocoder geocoder = new Geocoder(context);
+        List<Address> addresses = null;
+
+        try {
+            addresses = geocoder.getFromLocationName(locationName, 3);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (addresses != null) {
+            for (int i = 0; i < addresses.size(); i++) {
+                Address lating = addresses.get(i);
+                location.setLatitude(lating.getLatitude());
+                location.setLongitude(lating.getLongitude());
+            }
+        }
+        return location;
+    }
+
+
+    public ArrayList<TourData> getJson() {
+
+        ArrayList<TourData> TourList = new ArrayList<>();
+        String[] address = {"통영시","고성군","진주시","남해군","하동군","창원시","합천군","창녕군","거제시","함안군"};
+        // TODO 삭제
+        for (int i=0; i <41 ; i++) {
+            int j=(int)((Math.random()*10000)%10);
+            TourList.add(new TourData("성민2", "여름", address[j], "성공"));
+            if(i>=40){
+                Log.d(TAG, "getJson: 끝!");
+                return TourList;
+            }
+
+        }
 
         try {
             //인터넷을 url thread 객체 생성
+
             findJsonThread findJsonThread = new findJsonThread();
             //thread 실행
             findJsonThread.start();
@@ -69,14 +98,13 @@ public class newTableSeason extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //TODO 삭제
-            //SeasonDTO.add(new SeasonTourData("성민2", "여름", "통영시", "성공"));
-            //SeasonDTO.add(new SeasonTourData("성민3", "여름1", "통영시", "성공1"));
+
+            //TODO 주석 제거
+            TourList = new ArrayList<>();
 
 
 
             String jsonData = findJsonThread.getResult();
-
 
             // jsonData를 먼저 JSONObject 형태로 바꾼다.
             JSONObject obj = new JSONObject(jsonData);
@@ -111,14 +139,14 @@ public class newTableSeason extends AppCompatActivity {
                     String data_content = temp.getString("data_content");//내용
 
                     //SeasonTour객체에 맞춰 ArrayList에 넣기
-                    //SeasonDTO.add(new SeasonTourData(data_title, Season, data[i], data_content));
-
+                    TourList.add(new TourData(data_title, Season, data[i], data_content));
                 }
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
-
         }
+        return TourList;
     }
 
     public class findJsonThread extends Thread {
@@ -127,6 +155,9 @@ public class newTableSeason extends AppCompatActivity {
         public void run() {
 
             try {
+                String key = "7RANMEU5OfGEBQk2nW5QVCcwIdHD0uw0fOcDva5DC%2B6mSbygxfCmdkIcrrxUdCO998L5UTs6ptBItoAfNsfxWg%3D%3D";
+                String address = "http://apis.data.go.kr/6480000/gyeongnamtourseason/gyeongnamtourseasonlist";
+                String urlAddress = address + "?serviceKey=" + key + "&pageNo=1&numOfRows=55&resultType=json";
 
                 URL url = new URL(urlAddress);
                 InputStream is = url.openStream();
@@ -158,10 +189,4 @@ public class newTableSeason extends AppCompatActivity {
             return this.Result;
         }
     }
-
 }
-
-
-
-
-

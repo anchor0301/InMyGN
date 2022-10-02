@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),mapSeason.class);
+                Intent intent = new Intent(getApplicationContext(),LoadingActivity.class);
                 startActivity(intent);
             }
         });
