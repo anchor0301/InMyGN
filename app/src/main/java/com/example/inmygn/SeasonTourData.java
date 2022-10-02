@@ -1,6 +1,12 @@
 package com.example.inmygn;
 
-public class SeasonTourData {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
+public class SeasonTourData implements ClusterItem {
     //여행 주제
     private String data_title;
     //계절명
@@ -10,17 +16,42 @@ public class SeasonTourData {
     //여행 내용
     private String data_content;
 
-    public SeasonTourData(String data_title, String Season, String user_address, String data_content) {
+    private final LatLng mPosition;
+
+    public SeasonTourData(double lat,double lng,String data_title, String Season, String user_address, String data_content) {
         /**
+         * lat 위도
+         * lng 경도
          * data_title = 여행 주제
          * Season = 계절
          * user_address = 여행지
          * data_content = 여행 내용
          **/
+
+        mPosition = new LatLng(lat, lng);
         this.data_title = data_title;
         this.Season = Season;
         this.user_address = user_address;
         this.data_content = data_content;
+    }
+
+
+    @NonNull
+    @Override
+    public LatLng getPosition() {
+        return mPosition;
+    }
+
+    @Nullable
+    @Override
+    public String getTitle() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getSnippet() {
+        return null;
     }
 
     @Override
@@ -64,6 +95,7 @@ public class SeasonTourData {
     public void setData_content(String data_content) {
         this.data_content = data_content;
     }
+
 
 
 }

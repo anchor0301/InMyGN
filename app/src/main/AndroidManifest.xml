@@ -24,9 +24,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCdviHgwaulX8Wofmv8WyuGYS1K7YOrGJo" />
 
-        <activity
-            android:name=".tableSeason"
-            android:exported="true" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

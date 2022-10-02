@@ -9,7 +9,6 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnTable;
     Button btnMap;
     Button btnArraylist;
     @Override
@@ -17,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnTable= findViewById(R.id.btnTable);
         btnMap= findViewById(R.id.btnMap);
         btnArraylist= findViewById(R.id.btnArraylist);
         btnArraylist.setOnClickListener(new View.OnClickListener() {
@@ -28,13 +26,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnTable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),tableSeason.class);
-                startActivity(intent);
-            }
-        });
 
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override

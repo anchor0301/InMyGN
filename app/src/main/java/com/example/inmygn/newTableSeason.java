@@ -21,6 +21,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class newTableSeason extends AppCompatActivity {
+    String key = "WugO7Pgnqoa7fJuWbJ4nMaaIh%2Bvw2l%2F%2FaGF7MGgIyBl4vRTVhumNtnrqkL%2BJDxh94rXo%2BR8DgPREJu8h6AVefQ%3D%3D";
+    String address = "http://apis.data.go.kr/6480000/gyeongnamtourseason/gyeongnamtourseasonlist";
+    String urlAddress = address + "?serviceKey=" + key + "&pageNo=1&numOfRows=55&resultType=json";
 
     ArrayList<SeasonTourData> SeasonDTO = new ArrayList<SeasonTourData>();
     ListView listView;
@@ -31,123 +34,132 @@ public class newTableSeason extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_table_season);
 
-        //TODO
-
-        final MyAdapter myAdapter = new MyAdapter(this,SeasonDTO);
-
-
-        //thread 실행
-        getJSON(myAdapter);
+        //공공데이터 받아오기
+        getJson();
 
 
-        listView = (ListView)findViewById(R.id.listView);
+        final MyAdapter myAdapter = new MyAdapter(this, SeasonDTO);
+
+
+        listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(myAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView parent, View v, int position, long id){
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
                 Toast.makeText(getApplicationContext(),
-                        "성공",
-                        Toast.LENGTH_LONG).show();
+                        SeasonDTO.get(position).getData_title(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
 
     }
+    //json 파싱후 어뎁터에 넣음
+    public void getJson() {
+
+        try {
+            //인터넷을 url thread 객체 생성
+            findJsonThread findJsonThread = new findJsonThread();
+            //thread 실행
+            findJsonThread.start();
+
+            try {
+                findJsonThread.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //TODO 삭제
+            //SeasonDTO.add(new SeasonTourData("성민2", "여름", "통영시", "성공"));
+            //SeasonDTO.add(new SeasonTourData("성민3", "여름1", "통영시", "성공1"));
 
 
-    public void  getJSON(MyAdapter myAdapter) {
-        Thread thread = new Thread(new Runnable() {
 
-            public void run() {
+            String jsonData = findJsonThread.getResult();
+            // jsonData를 먼저 JSONObject 형태로 바꾼다.
+            JSONObject obj = new JSONObject(jsonData);
 
-                try {
-                    String key = "WugO7Pgnqoa7fJuWbJ4nMaaIh%2Bvw2l%2F%2FaGF7MGgIyBl4vRTVhumNtnrqkL%2BJDxh94rXo%2BR8DgPREJu8h6AVefQ%3D%3D";
-                    String address = "http://apis.data.go.kr/6480000/gyeongnamtourseason/gyeongnamtourseasonlist";
-                    String urlAddress = address + "?serviceKey=" + key + "&pageNo=1&numOfRows=55&resultType=json";
+            // obj의 "gyeongnamtourseasonlist"의 JSONObject를 추출
+            JSONObject gyeongnamtourseasonlist = (JSONObject) obj.get("gyeongnamtourseasonlist");
 
-                    URL url = new URL(urlAddress);
-                    InputStream is = url.openStream();
-                    InputStreamReader isr = new InputStreamReader(is);
-                    BufferedReader reader = new BufferedReader(isr);
+            // gyeongnamtourseasonlist "body"의 JSONObject를 추출
+            JSONObject SeasonBody = (JSONObject) gyeongnamtourseasonlist.get("body");
 
-                    StringBuffer buffer = new StringBuffer();
-                    String line = reader.readLine();
-                    while (line != null) {
-                        buffer.append(line + "\n");
-                        line = reader.readLine();
-                    }
+            // SeasonBody "item"의 JSONObject를 추출
+            JSONObject SeasonItems = (JSONObject) SeasonBody.get("items");
 
-                    String jsonData = buffer.toString();
+            // boxOfficeResult의 JSONObject에서 "dailyBoxOfficeList"의 JSONArray 추출
+            JSONArray dailyBoxOfficeList = (JSONArray) SeasonItems.get("item");
 
-                    // jsonData를 먼저 JSONObject 형태로 바꾼다.
-                    JSONObject obj = new JSONObject(jsonData);
+            for (int i = 0; i < dailyBoxOfficeList.length(); i++) {
 
-                    // obj의 "gyeongnamtourseasonlist"의 JSONObject를 추출
-                    JSONObject gyeongnamtourseasonlist = (JSONObject) obj.get("gyeongnamtourseasonlist");
+                JSONObject temp = dailyBoxOfficeList.getJSONObject(i);
 
-                    // gyeongnamtourseasonlist "body"의 JSONObject를 추출
-                    JSONObject SeasonBody = (JSONObject) gyeongnamtourseasonlist.get("body");
+                //여행지
+                String user_address = temp.getString("user_address");
 
-                    // SeasonBody "item"의 JSONObject를 추출
-                    JSONObject SeasonItems = (JSONObject) SeasonBody.get("items");
+                //문자열(슬라이싱)자르기
+                // '/'를 기준으로 문자열을 자른다.
+                String data[] = user_address.split("/");
 
-                    // boxOfficeResult의 JSONObject에서 "dailyBoxOfficeList"의 JSONArray 추출
-                    JSONArray dailyBoxOfficeList = (JSONArray) SeasonItems.get("item");
+                for (int j = 0; j < data.length; j++) {
 
-                    for (int i = 0; i < dailyBoxOfficeList.length(); i++) {
+                    String data_title = temp.getString("data_title");//주제
+                    String Season = temp.getString("category_name2");//계절명
+                    String data_content = temp.getString("data_content");//내용
 
-                        JSONObject temp = dailyBoxOfficeList.getJSONObject(i);
+                    //SeasonTour객체에 맞춰 ArrayList에 넣기
+                    //SeasonDTO.add(new SeasonTourData(data_title, Season, data[i], data_content));
 
-                        //여행지
-                        String user_address = temp.getString("user_address");
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
 
-                        //문자열(슬라이싱)자르기
-                        // '/'를 기준으로 문자열을 자른다.
-                        String data[] = user_address.split("/");
+        }
+    }
 
-                        for (int j = 0; j < data.length; j++) {
+    public class findJsonThread extends Thread {
+        private String Result;
 
-                            String data_title = temp.getString("data_title");//주제
-                            String Season = temp.getString("category_name2");//계절명
-                            String data_content = temp.getString("data_content");//내용
+        public void run() {
 
-                            //SeasonTour객체에 맞춰 ArrayList에 넣기
-                            SeasonDTO.add(new SeasonTourData("성민","여름","통영시","성공"));
-                            SeasonDTO.add(new SeasonTourData("성민1","여름1","통영시1","성공1"));
+            try {
 
-                        }
+                URL url = new URL(urlAddress);
+                InputStream is = url.openStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader reader = new BufferedReader(isr);
 
-                    }
-                    
-                    
-                    
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+                StringBuffer buffer = new StringBuffer();
+                String line = reader.readLine();
+                while (line != null) {
+                    buffer.append(line + "\n");
+                    line = reader.readLine();
                 }
 
-                //TODO 삭제
-                SeasonDTO.add(new SeasonTourData("성민","여름","통영시","성공"));
-                SeasonDTO.add(new SeasonTourData("성민1","여름1","통영시1","성공1"));
-                System.out.println("테스트 : "+SeasonDTO);
+                Result = buffer.toString();
 
 
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
 
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-        });
-        thread.start();
+
+        }
+
+        //결과값 리턴해주는 Getter
+        public String getResult() {
+            return this.Result;
+        }
     }
 
-
 }
+
+
+
 
 
