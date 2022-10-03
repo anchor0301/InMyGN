@@ -21,6 +21,12 @@
         android:text="지도로 보이기"
         android:textAllCaps="false"/>
 
+    <Button
+        android:id="@+id/btnPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="뷰페이져2 test"
+        android:textAllCaps="false"/>
 
 
 </LinearLayout>
