@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -34,7 +35,6 @@ dependencies {
 //  구글 지도 api
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
-
     implementation 'com.google.code.gson:gson:2.8.6'
     //android-maps-utils
     implementation 'com.google.maps.android:android-maps-utils:2.4.0'

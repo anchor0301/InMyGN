@@ -39,8 +39,6 @@ public class LoadingActivity extends AppCompatActivity {
 
 
         ArrayList<TourData> Tours = getJson();
-
-
         ArrayList<Location> Tour_Address = new ArrayList<>();
         for (int i = 0; i < Tours.size(); i++) {
             Location location;
@@ -206,15 +204,13 @@ public class LoadingActivity extends AppCompatActivity {
 
 
     public ArrayList<TourData> getJson() {
-
-
         ArrayList<TourData> TourList = new ArrayList<>();
         String[] address = {"창원시", "진주시", "통영시", "사천시", "김해시", "밀양시", "밀양시", "거제시", "양산시", "의령군", "함안군", "창녕군", "고성군", "남해군", "하동군", "산청군", "함양군", "거창군", "합천군"};
 
         // TODO 삭제
         for (int i = 0; i < 800; i++) {
             int j = (int)(Math.random()*100)%address.length;
-            TourList.add(new TourData("성민2", "여름", address[j], "성공"));
+            TourList.add(new TourData( address[j], "여름", address[j], "성공"));
             Log.d(TAG, "getJson: "+address[j]);
             if (i >= 70) {
                 Log.d(TAG, "getJson: 끝!");
@@ -236,7 +232,6 @@ public class LoadingActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            //TODO 주석 제거
             TourList = new ArrayList<>();
 
 

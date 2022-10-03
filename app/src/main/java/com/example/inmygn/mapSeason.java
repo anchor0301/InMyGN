@@ -7,6 +7,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
@@ -43,21 +46,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
+public class mapSeason extends AppCompatActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
-
-    private ClusterManager<SeasonTourData> clusterManager;
     ArrayList<TourData> Tours;
     ArrayList<Location> Tour_Address;
     Context context = this;
     final String TAG = "LogMainActivity";
+    View bottomSheet;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_season);
 
+        bottomSheet = findViewById(R.id.bottomSheet);
 
-        Tours = (ArrayList<TourData>)getIntent().getSerializableExtra("Tour");
+
+        Tours = (ArrayList<TourData>) getIntent().getSerializableExtra("Tour");
         Tour_Address = (ArrayList<Location>) getIntent().getSerializableExtra("Tour_addr");
 
 
@@ -72,83 +77,60 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback {
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
         //클러스터 받기
-        clusterManager = new ClusterManager<>(this, mMap);
 
-        mMap.setOnCameraIdleListener(clusterManager);
-        mMap.setOnMarkerClickListener(clusterManager);
+        //바텀시트 레이아웃을 BottomSheetBehavior과 연결한다
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+
+        //맵 마커 추가
+        updateMarker(Tours, Tour_Address);
 
         //맵 로딩이 성공한다면
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {  //맵 제한 범위 설정
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.4605301, 128.2131958), 9));//카메라 위치 설정
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 mMap.setLatLngBoundsForCameraTarget(new LatLngBounds(
                         new LatLng(33.986, 125.98), // 남서 방향
-                        new LatLng(38.726, 129.60)  // 북동 방향
+                        new LatLng(35.726, 129.20)  // 북동 방향
                 ));
-                mMap.setMinZoomPreference(8.0f);
+                mMap.setMinZoomPreference(9.0f);
                 mMap.setMaxZoomPreference(12.0f);
-
-
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.4605301, 128.2131958), 9));//카메라 위치 설정
             }
         });
 
 
-        mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+        //맵을 클릭시 행동
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onCameraMove() {
-                VisibleRegion vr = mMap.getProjection().getVisibleRegion();
-                double left = vr.latLngBounds.southwest.longitude;
-                double top = vr.latLngBounds.northeast.latitude;
-                double right = vr.latLngBounds.northeast.longitude;
-                double bottom = vr.latLngBounds.southwest.latitude;
-
-                if (clusterManager != null) clusterManager.clearItems();
-                findMarker(left, top, right, bottom);
-            } // 카메라 시점 이동
+            public void onMapClick(@NonNull LatLng latLng) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            }
         });
 
-        //마커를 클릭시 행동
-        clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener() {
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onClusterItemClick(ClusterItem item) {
-
-                Log.d("onMarkerClick", "START: ");
-                Toast.makeText(mapSeason.this, "예지니 ❤️", Toast.LENGTH_SHORT).show();
-
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 return false;
             }
         });
-
-        //클러스터를 클릭시 행동
-        clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<SeasonTourData>() {
-            @Override
-            public boolean onClusterClick(Cluster<SeasonTourData> cluster) {
-                Log.d("Cluster Click", "START");
-                Toast.makeText(mapSeason.this, "클릭 클리스터", Toast.LENGTH_SHORT).show();
-
-                return false;
-            }
-        });
-
 
     }
 
-    public void findMarker(double left, double top, double right, double bottom) {
-        for (int i = 0; i < Tour_Address.size(); i++) {
-            if (Tour_Address.get(i).getLongitude() >= left && Tour_Address.get(i).getLongitude() <= right) {
-                if (Tour_Address.get(i).getLatitude() >= bottom && Tour_Address.get(i).getLatitude() <= top) {
-                    Location location = Tour_Address.get(i);
-                    SeasonTourData clinicItem = new SeasonTourData(location.getLatitude(), location.getLongitude(),
-                            Tours.get(i).getData_title(), Tours.get(i).getSeason(), Tours.get(i).getUser_address(), Tours.get(i).getData_content());
-                    clusterManager.addItem(clinicItem);
-                }
-            }
+
+    private void updateMarker(ArrayList<TourData> Tour, ArrayList<Location> TourAddress) {
+        for (int i = 0; i < Tour.size(); i++) {
+
+            Location location = TourAddress.get(i);
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .title(Tour.get(i).getData_title())
+                    .snippet(Tour.get(i).getUser_address()));
+
         }
-    } // 경도와 위도 범위 안에 있는 주소정보를 찾아 마커를 추가
-
-
-
+    }
 
 }
 

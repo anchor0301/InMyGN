@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<!-- Persistent Bottom Sheet과의 상호작용을 위해 CoordinatorLayout 사용(필수) -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_weight="7"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent" >
 
+    tools:context="com.example.inmygn.mapSeason">
     <fragment
         android:id="@+id/map"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
-
-
-    <Button
-        android:id="@+id/btn_draw_State"
-        android:layout_gravity="center|bottom"
-        android:layout_height="80dp"
-        android:text="목 록"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="470dp"
-        android:layout_width="80dp" />
-</FrameLayout>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/houseViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="120dp"
+        android:orientation="horizontal"/>
+    <LinearLayout
+        android:id="@+id/bottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="100dp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        app:behavior_peekHeight="80dp"
+        app:behavior_hideable="true"        >
+        <include
+            android:id="@+id/layoutDialog"
+            layout="@layout/sheet_main"/>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

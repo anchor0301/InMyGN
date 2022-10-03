@@ -60,14 +60,16 @@ public class SeasonTourData implements ClusterItem, Serializable {
 
     @Nullable
     @Override
+    //마커를 클랙했는데 나타나는 타이틀
     public String getTitle() {
-        return null;
+        return data_title;
     }
 
     @Nullable
     @Override
+    //마커를 클랙했는데 나타나는 서브
     public String getSnippet() {
-        return null;
+        return data_content;
     }
 
     @Override
