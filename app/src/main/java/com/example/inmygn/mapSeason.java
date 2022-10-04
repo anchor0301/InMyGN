@@ -1,50 +1,26 @@
 package com.example.inmygn;
 
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterItem;
-import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.collections.MarkerManager;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class mapSeason extends AppCompatActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
@@ -60,7 +36,6 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback{
         setContentView(R.layout.activity_map_season);
 
         bottomSheet = findViewById(R.id.bottomSheet);
-
 
         Tours = (ArrayList<TourData>) getIntent().getSerializableExtra("Tour");
         Tour_Address = (ArrayList<Location>) getIntent().getSerializableExtra("Tour_addr");
@@ -105,16 +80,21 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback{
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull LatLng latLng) {
+
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                return false;
-            }
+                public boolean onMarkerClick(@NonNull Marker marker) {
+
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    Toast.makeText(getApplicationContext(),
+                            marker.getTitle(),
+                            Toast.LENGTH_SHORT).show();
+                    return false;
+                }
         });
 
     }
@@ -124,11 +104,13 @@ public class mapSeason extends AppCompatActivity implements OnMapReadyCallback{
         for (int i = 0; i < Tour.size(); i++) {
 
             Location location = TourAddress.get(i);
+
+            String Title= Tour.get(i).getData_title();
+            String Season = Tour.get(i).getSeason();
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .title(Tour.get(i).getData_title())
-                    .snippet(Tour.get(i).getUser_address()));
-
+                    .title(Title)
+                    .snippet(Season));
         }
     }
 

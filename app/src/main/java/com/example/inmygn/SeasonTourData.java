@@ -1,14 +1,10 @@
 package com.example.inmygn;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.clustering.ClusterItem;
 
 import java.io.Serializable;
 
-public class SeasonTourData implements ClusterItem, Serializable {
+public class SeasonTourData implements  Serializable {
     //여행 주제
     private String data_title;
     //계절명
@@ -52,25 +48,6 @@ public class SeasonTourData implements ClusterItem, Serializable {
     }
 
 
-    @NonNull
-    @Override
-    public LatLng getPosition() {
-        return mPosition;
-    }
-
-    @Nullable
-    @Override
-    //마커를 클랙했는데 나타나는 타이틀
-    public String getTitle() {
-        return data_title;
-    }
-
-    @Nullable
-    @Override
-    //마커를 클랙했는데 나타나는 서브
-    public String getSnippet() {
-        return data_content;
-    }
 
     @Override
     public String toString() {

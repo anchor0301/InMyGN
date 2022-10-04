@@ -2,6 +2,7 @@ package com.example.inmygn;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -29,14 +30,20 @@ public class newTableSeason extends AppCompatActivity {
     ArrayList<SeasonTourData> SeasonDTO = new ArrayList<SeasonTourData>();
     ListView listView;
 
+    ArrayList<TourData> Tours;
+    ArrayList<Location> Tour_Address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_table_season);
 
-        //공공데이터 받아오기
-        getJson();
+        Tours = (ArrayList<TourData>) getIntent().getSerializableExtra("Tour");
+        Tour_Address = (ArrayList<Location>) getIntent().getSerializableExtra("Tour_addr");
+        Log.d("TAG", "onCreate: size"+Tours.size());
+        
+        //공공데이터 받아출력하기
+        updateMarker(Tours,Tour_Address);
 
         final MyAdapter myAdapter = new MyAdapter(this, SeasonDTO);
 
@@ -69,11 +76,6 @@ public class newTableSeason extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //TODO 삭제
-            //SeasonDTO.add(new SeasonTourData("성민2", "여름", "통영시", "성공"));
-            //SeasonDTO.add(new SeasonTourData("성민3", "여름1", "통영시", "성공1"));
-
-
 
             String jsonData = findJsonThread.getResult();
 
@@ -111,7 +113,7 @@ public class newTableSeason extends AppCompatActivity {
                     String data_content = temp.getString("data_content");//내용
 
                     //SeasonTour객체에 맞춰 ArrayList에 넣기
-                    //SeasonDTO.add(new SeasonTourData(data_title, Season, data[i], data_content));
+                    SeasonDTO.add(new SeasonTourData(data_title, Season, data[i], data_content));
 
                 }
             }
@@ -156,6 +158,20 @@ public class newTableSeason extends AppCompatActivity {
         //결과값 리턴해주는 Getter
         public String getResult() {
             return this.Result;
+        }
+    }
+
+
+    private void updateMarker(ArrayList<TourData> Tour, ArrayList<Location> TourAddress) {
+
+        for (int i = 0; i < Tour.size(); i++) {
+            String Title= Tour.get(i).getData_title();
+            String Season = Tour.get(i).getSeason();
+            String address = Tour.get(i).getUser_address();
+            String content = Tour.get(i).getData_content();
+            SeasonDTO.add(new SeasonTourData(Title, Season, address,content ));
+
+
         }
     }
 

@@ -1,19 +1,13 @@
 package com.example.inmygn;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import java.io.Serializable;
-
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ListView;
 
-import com.google.android.gms.maps.model.LatLng;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +19,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,12 +165,13 @@ public class LoadingActivity extends AppCompatActivity {
                     break;
             }
             //Tour_Address.add(location);
-        } // 병원 주소만 위도경보로 변환하여 모아놓음
+        } // 주소만 위도경보로 변환하여 모아놓음
 
         Intent intent = new Intent(LoadingActivity.this, mapSeason.class);
         intent.putExtra("Tour", Tours);
         intent.putExtra("Tour_addr", Tour_Address);
         startActivity(intent);
+
     }
 
     public static Location addrToPoint(Context context, String locationName) {
@@ -205,19 +199,7 @@ public class LoadingActivity extends AppCompatActivity {
 
     public ArrayList<TourData> getJson() {
         ArrayList<TourData> TourList = new ArrayList<>();
-        String[] address = {"창원시", "진주시", "통영시", "사천시", "김해시", "밀양시", "밀양시", "거제시", "양산시", "의령군", "함안군", "창녕군", "고성군", "남해군", "하동군", "산청군", "함양군", "거창군", "합천군"};
 
-        // TODO 삭제
-        for (int i = 0; i < 800; i++) {
-            int j = (int)(Math.random()*100)%address.length;
-            TourList.add(new TourData( address[j], "여름", address[j], "성공"));
-            Log.d(TAG, "getJson: "+address[j]);
-            if (i >= 70) {
-                Log.d(TAG, "getJson: 끝!");
-                return TourList;
-            }
-
-        }
 
         try {
             //인터넷을 url thread 객체 생성
